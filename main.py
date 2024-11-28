@@ -8,10 +8,14 @@ import time #just to freeze the window to check
 
 pygame.event.get() => 
 
-To convert into exe: pip install auto-py-to-exe
+To convert .py into exe: pip install auto-py-to-exe
 https://pypi.org/project/auto-py-to-exe/
 
-To run: python -m auto_py_to_exe
+To run for converting .py into .exe: *python -m auto_py_to_exe*
+1) select one file -> main.py
+2) Console Window -> Window based (hide the console)
+3) in Additional Files -> Select resources folder
+4) convert .py to .exe
 """
 #pip install pygame
 
@@ -21,7 +25,7 @@ import time
 import random #to move apple at random position
 
 SIZE = 40 #as size of block is 40 blocks
-BACKGROUND_COLOR = (110,110,5)
+#BACKGROUND_COLOR = (110,110,5)
 
 class Apple:
     def __init__(self,parent_screen):
@@ -106,7 +110,7 @@ class Game:
     def __init__(self):
         pygame.init() #initializes the pygame module,
 
-        pygame.display.set_caption("Author: Priyal Nile & Inspiration: Code Basics YouTube")
+        pygame.display.set_caption("Author: Priyal Nile")
 
         pygame.mixer.init() #initializing the sound module of pygame
         self.play_background_music() #playing background music as soon as the game starts
