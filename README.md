@@ -1,6 +1,7 @@
 # Snake Apple Python Game:
 
 This is a fun game that we all have seen as a child where a snake eats an apple/insect and keeps growing in size until it hits itself or the playground boundry.
+
 Author: Priyal Nile
 Inspiration/Credits: Codebasics YouTube Channel
 ---
