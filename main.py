@@ -31,12 +31,12 @@ class Apple:
     def __init__(self,parent_screen):
         self.parent_screen = parent_screen #As we need something to draw upon!
         self.image = pygame.image.load("resources/apple.jpg").convert()
-        self.x = SIZE*3 
+        self.x = SIZE*3 #Note: x & y are the co-ordinates where apple will be initiated/placed.
         self.y = SIZE*3 #Should be multiple of 40 as 40 blocks of snake block size!
     
     def draw(self):
         self.parent_screen.blit(self.image, (self.x,self.y)) #blit draws the image
-        pygame.display.flip() #updating the screen with changes we did!
+        pygame.display.flip() #updating the screen with changes we did! Needed everytime!
 
     def move(self):
         '''
@@ -61,7 +61,7 @@ class Snake:
         #self.parent_screen.fill(BACKGROUND_COLOR) #to fill the background with some color; 255,255,255 is white color; will also ensure before drawing the block, the screen is clear.
 
         for i in range(self.length):
-            self.parent_screen.blit(self.block, (self.x[i],self.y[i])) #blit draws the image
+            self.parent_screen.blit(self.block, (self.x[i],self.y[i])) #blit draws the image and as with more length, there will be more blocks hence array of x & y!
         pygame.display.flip() #updating the screen with changes we did!
     
     def increase_length(self):
@@ -117,9 +117,9 @@ class Game:
 
         
         self.surface = pygame.display.set_mode((1000,800)) #initializes game window size!
-        self.surface.fill((110, 110, 5))
+        #self.surface.fill((110, 110, 5)) #incase color backround is needed. But, we are using picture as a background
 
-        self.snake = Snake(self.surface, 1) #Since snake would be within a Game, creating snake object here
+        self.snake = Snake(self.surface, 1) #Since snake would be within a Game, creating snake object here with length 1 by default
         self.snake.draw()
 
         self.apple = Apple(self.surface)
@@ -137,7 +137,7 @@ class Game:
     def display_score(self):
         self.font = pygame.font.SysFont('aerial',30)
         self.score = self.font.render(f"Score:{self.snake.length}", True, (255,255,255))
-        self.surface.blit(self.score,(900,10))
+        self.surface.blit(self.score,(900,10)) #to display score on the screen blit is must!
 
     def play_background_music(self):
         pygame.mixer.music.load("resources/bg_music_1.mp3") #Note: music is longer, sound is shorter duration.
@@ -156,7 +156,7 @@ class Game:
             self.snake.walk()
             self.apple.draw()
             self.display_score()
-            pygame.display.flip()
+            pygame.display.flip() #updating the screen with changes we did! Needed everytime!
 
             #Snake Eating/colliding with Apple:
             if self.is_collision(self.snake.x[0],self.snake.y[0],self.apple.x,self.apple.y):
