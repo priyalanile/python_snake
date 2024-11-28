@@ -162,7 +162,7 @@ class Game:
                 self.play_sound("ding")
                 self.snake.increase_length()
                 self.apple.move()
-                print("Collision Occured!")
+                #print("Collision Occured!")
             
             #Snake Colliding with itself! i.e. finding collision of head with remaining blocks.
             for i in range(2,self.snake.length): #3 as 2 blocks of its body,the snake won't be hitting anyways.
