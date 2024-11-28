@@ -16,9 +16,10 @@ pygame.event.get() =>
 import pygame #To import Python game module
 from pygame.locals import * #To get all kinds of pygame events
 import time
+import random #to move apple at random position
 
 SIZE = 40 #as size of block is 40 blocks
-
+BACKGROUND_COLOR = (110,110,5)
 class Apple:
     def __init__(self,parent_screen):
         self.image = pygame.image.load("resources/apple.jpg").convert()
@@ -30,6 +31,15 @@ class Apple:
         self.parent_screen.blit(self.image, (self.x,self.y)) #blit draws the image
         pygame.display.flip() #updating the screen with changes we did!
 
+    def move(self):
+        '''
+        Note: Horizontal window size limit =1000, vertical window size limit=800,
+        with 40 SIZe i.e. pixel size of apple, 1000/40 i.e. 25 possible increments in horizontal space possible &
+        same 800/40 i.e. 20 possible increments in vertical space possible (in order to not exceed apple outside the window)
+        Note: Kept the value little bit low by 1, just to avoid apple going out of the window.
+        '''
+        self.x = random.randint(0,24)*SIZE #1000 (horizontal window size)/40 i.e. 25 possible increments
+        self.y = random.randint(0,19)*SIZE #800(vertical window size)/40=20 i.e. 20 possible increments as we have 
 
 class Snake:
     def __init__(self, parent_screen,length):
@@ -41,12 +51,18 @@ class Snake:
         self.direction = 'down'
     
     def draw(self): #Function to draw a block
-        self.parent_screen.fill((110, 110, 5)) #to fill the background with some color; 255,255,255 is white color; will also ensure before drawing the block, the screen is clear.
+        self.parent_screen.fill(BACKGROUND_COLOR) #to fill the background with some color; 255,255,255 is white color; will also ensure before drawing the block, the screen is clear.
 
         for i in range(self.length):
             self.parent_screen.blit(self.block, (self.x[i],self.y[i])) #blit draws the image
         pygame.display.flip() #updating the screen with changes we did!
     
+    def increase_length(self):
+        self.length+=1
+        self.x.append(-1) #putting random value of -1 for now, as we can deal with it in walk() function
+        self.y.append(-1) #putting random value of -1 for now, as we can deal with it in walk() function
+
+
     def move_left(self):
         self.direction = 'left'
         self.draw()
@@ -89,19 +105,65 @@ class Game:
         self.surface = pygame.display.set_mode((1000,800)) #initializes game window size!
         self.surface.fill((110, 110, 5))
 
-        self.snake = Snake(self.surface, 6) #Since snake would be within a Game, creating snake object here
+        self.snake = Snake(self.surface, 1) #Since snake would be within a Game, creating snake object here
         self.snake.draw()
 
         self.apple = Apple(self.surface)
         self.apple.draw()
 
+    def is_collision(self,x1,y1,x2,y2):
+        '''
+        #Collission detection logic. Snake(x1,y1) & apple(x2,y2)
+        '''
+        if x1 >= x2 and x1 < x2 + SIZE:
+            if y1 >= y2 and y1< y2 + SIZE:
+                return True
+        return False
+        
+    def display_score(self):
+        self.font = pygame.font.SysFont('aerial',30)
+        self.score = self.font.render(f"Score:{self.snake.length}", True, (255,255,255))
+        self.surface.blit(self.score,(900,10))
+
     def play(self):
             self.snake.walk()
             self.apple.draw()
+            self.display_score()
+            pygame.display.flip()
+
+            #Snake Colliding with Apple:
+            if self.is_collision(self.snake.x[0],self.snake.y[0],self.apple.x,self.apple.y):
+                #We would check collision of x[0] & y[0] only i.e. snake head!
+                self.snake.increase_length()
+                self.apple.move()
+                print("Collision Occured!")
+            
+            #Snake Colliding with itself! i.e. finding collision of head with remaining blocks.
+
+            for i in range(3,self.snake.length):
+                if self.is_collision(self.snake.x[0], self.snake.y[0], self.snake.x[i],self.snake.y[i]):
+                    raise "Game Over"
+
+    def show_game_over(self):
+        self.surface.fill(BACKGROUND_COLOR) #clearing the surface
+        self.font = pygame.font.SysFont('aerial',30)
+        self.line1 = self.font.render(f"Game is Over! Your Score is:{self.snake.length}", True, (255,255,255))
+        self.surface.blit(self.line1,(200,300)) #200,300 ~middle of screen!
+
+        self.line2 = self.font.render("To play again Press Enter. To exit press Escape!",True,(255,255,255))
+        self.surface.blit(self.line2,(200,350)) #200,350 ~middle of screen!
+        pygame.display.flip() #refreshing UI
+
+    def reset(self): #i.e. We reinitialize our Snake & Apple objects.
+
+        self.snake = Snake(self.surface, 1) #Since snake would be within a Game, creating snake object here
+        self.apple = Apple(self.surface)
+
 
     def run(self):
             
             running=True #Variable controlling running window on screen
+            pause=False
 
             while running: #To keep the window open until conditio is met!
                 for event in pygame.event.get(): #To get all kinds of pygame events
@@ -111,23 +173,33 @@ class Game:
                         if event.key == K_ESCAPE: #to exit game by escape
                             running=False
 
-                        if event.key == K_UP: #based on X,Y co-ordinates of this game window! X doesn't affect!
-                            self.snake.move_up()
+                        if event.key == K_RETURN:
+                            pause=False
 
-                        if event.key == K_DOWN:
-                            self.snake.move_down()
+                        if not pause:
 
-                        if event.key == K_LEFT: #Y doesn't affect!
-                            self.snake.move_left()
+                            if event.key == K_UP: #based on X,Y co-ordinates of this game window! X doesn't affect!
+                                self.snake.move_up()
 
-                        if event.key == K_RIGHT:
-                            self.snake.move_right()
+                            if event.key == K_DOWN:
+                                self.snake.move_down()
+
+                            if event.key == K_LEFT: #Y doesn't affect!
+                                self.snake.move_left()
+
+                            if event.key == K_RIGHT:
+                                self.snake.move_right()
 
                     elif event.type == QUIT: #to exit game by closing the sign
                         running=False
 
-
-                self.play()
+                try:
+                    if not pause:
+                        self.play()
+                except Exception as e: #as Game over is like interruption. So handling here.
+                    self.show_game_over() 
+                    pause=True
+                    self.reset() #to reset the game when someone wants to replay the game again.
 
                 time.sleep(0.3)
 
