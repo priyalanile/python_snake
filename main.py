@@ -7,6 +7,11 @@ Event Loop: Every UI application has it to suspend the screen for sometime and a
 import time #just to freeze the window to check
 
 pygame.event.get() => 
+
+To convert into exe: pip install auto-py-to-exe
+https://pypi.org/project/auto-py-to-exe/
+
+To run: python -m auto_py_to_exe
 """
 #pip install pygame
 
