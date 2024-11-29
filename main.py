@@ -1,7 +1,7 @@
 """
-Note: Pygame Documentation
-
-Pygame is a set of Python modules designed for writing games
+Refer Project_Details_PPT.pptx for understanding Project details (Class logic, functions in each class,
+all components and quick architecture)
+Note: Refer Pygame Documentation in case interested to learn more!. Pygame is a set of Python modules designed for writing games
 
 Event Loop: Every UI application has it to suspend the screen for sometime and awaits for mouse or keyboard input.
 import time #just to freeze the window to check
